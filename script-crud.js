@@ -1,6 +1,9 @@
 const taskListContainer = document.querySelector('.app__section-task-list')
+const formTask = document.querySelector('.app__form-add-task')
+const formLabel = document.querySelector('.app__form-label')
+const toggleFormTaskBtn = document.querySelector('.app__button--add-task')
 
-let lista = [
+let tarefas = [
     {
         descricao: 'Tarefa concluída!',
         concluida: true
@@ -18,7 +21,7 @@ const taskIconSvg = `
     <path
         d="M9 16.1719L19.5938 5.57812L21 6.98438L9 18.9844L3.42188 13.4062L4.82812 12L9 16.1719Z"
         fill="#01080E" />
-</
+</svg>
 `
 
 function createTask(tarefa) {
@@ -37,3 +40,13 @@ function createTask(tarefa) {
 
     return li
 }
+
+tarefas.forEach(task => {
+    const taskItem = createTask(task)
+    taskListContainer.appendChild(taskItem)
+})
+
+toggleFormTaskBtn.addEventListener('click', () => {
+    formLabel.textContent = 'Adicionando tarefa.'
+    formTask.classList.toggle('hidden')
+})
