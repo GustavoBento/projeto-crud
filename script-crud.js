@@ -5,6 +5,7 @@ const toggleFormTaskBtn = document.querySelector('.app__button--add-task')
 const textArea = document.querySelector('.app__form-textarea')
 const cancelFormTaskBtn = document.querySelector('.app__form-footer__button--cancel')
 const btnCancelar = document.querySelector('.app__form-footer__button--cancel')
+const btnDeletar = document.querySelector('.app__form-footer__button--delete')
 const localStorageTarefas = localStorage.getItem('tarefas')
 const taskActiveDescription = document.querySelector('.app__section-active-task-description')
 
@@ -15,6 +16,10 @@ let tarefaEmEdicao = null
 let paragraphEmEdicao = null
 
 const selecionaTarefa = (tarefa, elemento) => {
+    if(tarefa.concluida) {
+        return
+    }
+
     document.querySelectorAll('.app__section-task-list-item-active').forEach(function (button){
         button.classList.remove('app__section-task-list-item-active')
     }) 
@@ -83,9 +88,13 @@ function createTask(tarefa) {
     paragraph.textContent = tarefa.descricao
 
     iconSvg.addEventListener('click', (event) => {
-        event.stopPropagation()
-        button.setAttribute('disabled', true)
-        li.classList.add('app__section-task-list-item-complete')
+        if(tarefa==tarefaSelecionada) {
+            event.stopPropagation()
+            button.setAttribute('disabled', true)
+            li.classList.add('app__section-task-list-item-complete')
+            tarefaSelecionada.concluida = true
+            updateLocalStorage()
+        }
     })
 
     if (tarefa.concluida) {
@@ -142,5 +151,28 @@ cancelFormTaskBtn.addEventListener('click', () => {
 
 btnCancelar.addEventListener('click', limparTela)
 
+btnDeletar.addEventListener('click', () => {
+    if(tarefaSelecionada) {
+        const index = tarefas.indexOf(tarefaSelecionada)
 
+        if(index !== -1) {
+            tarefas.splice(index, 1)
+        }
+        itemTarefaSelecionada.remove()
+        tarefas.filter(t=> t!= tarefaSelecionada)
+        itemTarefaSelecionada = null
+        tarefaSelecionada = null
+    }
+    updateLocalStorage()
+    limparTela()
+})
+
+document.addEventListener('TempoFinalizado', function (e) {
+    if (tarefaSelecionada) {
+        tarefaSelecionada.concluida = true
+        tarefaSelecionada.classList.add('app__section-task-list-item-complete')
+        tarefaSelecionada.querySelector('button').setAttribute('disabled', true)
+        updateLocalStorage()
+    }
+})
 
